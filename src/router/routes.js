@@ -1,4 +1,4 @@
-import { RootRoute, Route } from "@tanstack/react-router";
+import { RootRoute, Route, redirect } from "@tanstack/react-router";
 import RootLayout from "../pages/RootLayout";
 import LoginPage from "../pages/LoginPage/LoginPage";
 import RegisterPage from "../pages/RegisterPage/RegisterPage";
@@ -7,6 +7,16 @@ import ProductDetailPage from "../pages/ProductDetailPage/ProductDetailPage";
 
 export const rootRoute = new RootRoute({
     component: RootLayout,
+});
+
+export const indexRoute = new Route({
+    getParentRoute: () => rootRoute,
+    path: "/",
+    beforeLoad: () => {
+        throw redirect({
+            to: "/login",
+        });
+    },
 });
 
 export const loginRoute = new Route({
