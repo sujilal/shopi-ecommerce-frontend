@@ -6,7 +6,6 @@ import {
   Box,
   Typography,
   Button,
-  Alert,
   Paper,
   Pagination,
 } from "@mui/material";
@@ -36,7 +35,7 @@ const ProductListPage = () => {
     }
   }, [isAuthenticated, navigate]);
 
- 
+
   React.useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm]);
@@ -69,9 +68,9 @@ const ProductListPage = () => {
   }
 
   if (error) {
-    const isAccessDenied = error.message?.includes("Access denied") || 
-                          error.networkError?.statusCode === 401 ||
-                          error.graphQLErrors?.some(e => e.extensions?.code === "UNAUTHENTICATED");
+    const isAccessDenied = error.message?.includes("Access denied") ||
+      error.networkError?.statusCode === 401 ||
+      error.graphQLErrors?.some(e => e.extensions?.code === "UNAUTHENTICATED");
 
     return (
       <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -152,7 +151,6 @@ const ProductListPage = () => {
               ))}
             </Grid>
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
                 <Pagination
