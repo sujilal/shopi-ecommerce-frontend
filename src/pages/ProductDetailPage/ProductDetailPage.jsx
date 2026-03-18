@@ -60,12 +60,13 @@ const ProductDetailPage = () => {
     }
   );
 
+  const product = productData?.getProductBySlug;
 
   const { data: reviewsData, loading: reviewsLoading, refetch: refetchReviews } = useQuery(
     GET_PRODUCT_REVIEWS,
     {
-      variables: { slug, cursor: null },
-      skip: !isAuthenticated
+      variables: { productId: product?.id },
+      skip: !isAuthenticated || !product?.id
     }
   );
 
@@ -77,8 +78,7 @@ const ProductDetailPage = () => {
     }
   });
 
-  const product = productData?.getProductBySlug;
-  const reviews = reviewsData?.getProductReviews?.reviews || [];
+  const reviews = reviewsData?.getProductReviews?.reviewList || [];
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -90,10 +90,15 @@ const ProductDetailPage = () => {
     try {
       await addReview({
         variables: {
-          product: product.id,
-          review: formData.comment,
-          rating: formData.rating,
-          isImages: true
+          payload: {
+            product: product.id,
+            review: formData.comment,
+            rating: formData.rating,
+            isImages: formData.images ? true : false,
+            media: formData.images ? formData.images.map(img => ({
+              secure_url: img
+            })) : []
+          }
         }
       });
     } catch (error) {
@@ -131,7 +136,10 @@ const ProductDetailPage = () => {
         <Grid container spacing={4}>
 
           <Grid item xs={12} md={6}>
-            <Carousel images={product.images || [product.image]} video={product.video} />
+            <Carousel 
+              images={product.images?.map(img => img.secure_url) || []} 
+              video={product.video?.secure_url} 
+            />
           </Grid>
 
 
@@ -141,13 +149,13 @@ const ProductDetailPage = () => {
             </Typography>
 
             <Typography variant="h5" color="primary" sx={{ mb: 2 }}>
-              ${product.price}
+              {product.currency}{product.price}
             </Typography>
 
             <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-              <Rating value={product.rating} readOnly />
+              <Rating value={product.averageRating} readOnly />
               <Typography variant="body2" sx={{ ml: 1 }}>
-                {product.rating} ({product.reviews} reviews)
+                {product.averageRating} ({product.totalReviews} reviews)
               </Typography>
             </Box>
 
@@ -155,8 +163,29 @@ const ProductDetailPage = () => {
               {product.description}
             </Typography>
 
-            <Button variant="contained" color="primary" fullWidth size="large">
-              Add to Cart
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="body2">
+                <strong>Brand:</strong> {product.brand || "N/A"}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Category:</strong> {product.category || "N/A"}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Stock:</strong> {product.inStock ? "In Stock" : "Out of Stock"} ({product.quantityRemaining} available)
+              </Typography>
+              <Typography variant="body2">
+                <strong>Seller:</strong> {product.shop?.owner || "N/A"}
+              </Typography>
+            </Box>
+
+            <Button 
+              variant="contained" 
+              color="primary" 
+              fullWidth 
+              size="large"
+              disabled={!product.inStock}
+            >
+              {product.inStock ? "Add to Cart" : "Out of Stock"}
             </Button>
           </Grid>
         </Grid>

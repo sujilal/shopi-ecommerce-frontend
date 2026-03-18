@@ -65,14 +65,17 @@ const RegisterPage = () => {
         try {
             const { data } = await createUserMutation({
                 variables: {
-                    email: formData.email,
-                    password: formData.password,
-                    name: formData.name
+                    payload: {
+                        email: formData.email,
+                        password: formData.password,
+                        displayName: formData.name,
+                        provider: "local"
+                    }
                 }
             });
 
             if (data?.createUser) {
-                register(data.createUser.user, data.createUser.token);
+                register(data.createUser.user, data.createUser.authToken);
                 navigate({ to: "/products" });
             }
         } catch (err) {

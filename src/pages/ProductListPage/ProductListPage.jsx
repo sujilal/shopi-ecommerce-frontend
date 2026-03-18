@@ -12,7 +12,7 @@ import { useAuth } from "../../hooks/useAuth";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import ProductCard from "../../components/ProductCard/ProductCard";
 import Loader from "../../components/Loader/Loader";
-import { GET_LANDING_PRODUCTS, SEARCH_PRODUCTS } from "../../graphql/queries/queries";
+import { GET_ALL_PRODUCTS, SEARCH_PRODUCTS } from "../../graphql/queries/queries";
 import LogoutIcon from "@mui/icons-material/Logout";
 import "./ProductListPage.scss";
 
@@ -30,16 +30,16 @@ const ProductListPage = () => {
 
 
   const { data, loading, error } = useQuery(
-    searchTerm ? SEARCH_PRODUCTS : GET_LANDING_PRODUCTS,
+    searchTerm ? SEARCH_PRODUCTS : GET_ALL_PRODUCTS,
     {
-      variables: searchTerm ? { keyword: searchTerm } : { cursor: null },
+      variables: searchTerm ? { search: searchTerm } : {},
       skip: !isAuthenticated
     }
   );
 
   const products = searchTerm
     ? data?.searchHomeProducts || []
-    : data?.getLandingProducts?.products || [];
+    : data?.getAllProducts?.products || [];
 
   const handleLogout = () => {
     logout();
@@ -67,7 +67,7 @@ const ProductListPage = () => {
           </Typography>
           {user && (
             <Typography variant="body2" color="textSecondary">
-              Welcome, {user.name}
+              Welcome, {user.displayName || user.email}
             </Typography>
           )}
         </Box>

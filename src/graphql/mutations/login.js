@@ -1,39 +1,72 @@
 import { gql } from "@apollo/client";
 
-export const LOGIN_USER = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      token
+export const USER_LOGIN = gql`
+  mutation UserLogin($email: String!, $password: String!) {
+    userLogin(email: $email, password: $password) {
+      authToken
       user {
         id
         email
-        name
+        displayName
+      }
+    }
+  }
+`;
+
+export const ADMIN_LOGIN = gql`
+  mutation AdminLogin($email: String!, $password: String!) {
+    adminLogin(email: $email, password: $password) {
+      authToken
+      user {
+        email
       }
     }
   }
 `;
 
 export const CREATE_USER = gql`
-  mutation CreateUser($email: String!, $password: String!, $name: String!) {
-    createUser(email: $email, password: $password, name: $name) {
-      token
+  mutation CreateUser($payload: CreateUserPayload!) {
+    createUser(payload: $payload) {
+      authToken
       user {
         id
         email
-        name
+        displayName
       }
     }
   }
 `;
 
 export const ADD_PRODUCT_REVIEW = gql`
-  mutation AddProductReview($product: ID!, $review: String!, $rating: Int!, $isImages: Boolean) {
-    addProductReview(product: $product, review: $review, rating: $rating, isImages: $isImages) {
+  mutation AddProductReview($payload: ProductReviewsPayload!) {
+    addProductReview(payload: $payload) {
       id
-      author
+      review
+      product {
+        id
+      }
+      user {
+        displayName
+        image
+      }
       rating
-      comment
-      date
+      likes {
+        image
+        lastMessage {
+          content
+        }
+      }
+      dislikes {
+        lastMessage {
+          content
+        }
+      }
+      media {
+        secure_url
+      }
+      isImages
+      createdAt
+      updatedAt
     }
   }
 `;

@@ -1,5 +1,45 @@
 import { gql } from "@apollo/client";
 
+export const GET_ALL_PRODUCTS = gql`
+  query GetAllProducts {
+    getAllProducts(filters: { query: null }) {
+      products {
+        id
+        views
+        category
+        currency
+        approved
+        slug
+        title
+        images {
+          secure_url
+        }
+        stockCount
+        quantityRemaining
+        inStock
+        live
+        featured
+        showStock
+        video {
+          secure_url
+        }
+        type
+        brand
+        color
+        description
+        price
+        negotiable
+        isAddedToFavs
+        averageRating
+        totalReviews
+        percentageDiscount
+        attributes
+        createdAt
+      }
+    }
+  }
+`;
+
 export const GET_LANDING_PRODUCTS = gql`
   query GetLandingProducts($cursor: String) {
     getLandingProducts(cursor: $cursor) {
@@ -23,17 +63,39 @@ export const GET_LANDING_PRODUCTS = gql`
 `;
 
 export const SEARCH_PRODUCTS = gql`
-  query SearchProducts($keyword: String!) {
-    searchHomeProducts(keyword: $keyword) {
+  query SearchHomeProducts($search: String!) {
+    searchHomeProducts(search: $search) {
       id
-      title
+      views
+      category
+      currency
+      approved
       slug
-      price
-      rating
-      reviews
-      image
-      images
+      title
+      images {
+        secure_url
+      }
+      stockCount
+      quantityRemaining
+      inStock
+      live
+      featured
+      showStock
+      video {
+        secure_url
+      }
+      type
+      brand
+      color
       description
+      price
+      negotiable
+      isAddedToFavs
+      averageRating
+      totalReviews
+      percentageDiscount
+      attributes
+      createdAt
     }
   }
 `;
@@ -42,32 +104,62 @@ export const GET_PRODUCT_BY_SLUG = gql`
   query GetProductBySlug($slug: String!) {
     getProductBySlug(slug: $slug) {
       id
+      views
+      category
+      shop {
+        owner
+      }
+      currency
+      approved
       title
-      slug
-      price
-      rating
-      reviews
-      image
-      images
-      video
+      stockCount
+      quantityRemaining
+      inStock
+      live
+      featured
+      showStock
+      images {
+        secure_url
+      }
+      video {
+        secure_url
+      }
+      type
+      brand
+      color
       description
+      price
+      negotiable
+      slug
+      isAddedToFavs
+      averageRating
+      totalReviews
+      percentageDiscount
+      attributes
+      isAddedToFav
+      createdAt
     }
   }
 `;
 
 export const GET_PRODUCT_REVIEWS = gql`
-  query GetProductReviews($slug: String!, $cursor: String) {
-    getProductReviews(slug: $slug, cursor: $cursor) {
-      reviews {
+  query GetProductReviews($productId: String!) {
+    getProductReviews(productId: $productId) {
+      reviewList {
+        isImages
         id
-        author
+        user {
+          displayName
+          image
+        }
         rating
-        comment
-        date
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
+        review
+        likes {
+          displayName
+          lastMessage {
+            content
+          }
+        }
       }
     }
   }

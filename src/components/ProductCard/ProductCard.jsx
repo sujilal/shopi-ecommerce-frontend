@@ -18,12 +18,17 @@ const ProductCard = ({ product }) => {
     navigate({ to: `/product/${product.slug}` });
   };
 
+
+  const imageUrl = product.images?.[0]?.secure_url || product.image;
+  const rating = product.averageRating || product.rating || 0;
+  const reviews = product.totalReviews || product.reviews || 0;
+
   return (
     <Card className="product-card">
       <CardMedia
         component="img"
         className="card-image"
-        image={product.image}
+        image={imageUrl}
         alt={product.title}
       />
 
@@ -33,9 +38,9 @@ const ProductCard = ({ product }) => {
         </Typography>
 
         <Box className="rating-section">
-          <Rating value={product.rating} readOnly size="small" />
+          <Rating value={rating} readOnly size="small" />
           <Typography variant="caption">
-            ({product.reviews})
+            ({reviews})
           </Typography>
         </Box>
 
@@ -49,7 +54,7 @@ const ProductCard = ({ product }) => {
 
         <Box className="card-footer">
           <Typography variant="h6" className="price">
-            ${product.price}
+            {product.currency || "$"}{product.price}
           </Typography>
           <Button
             size="small"
