@@ -11,14 +11,19 @@ import {
   Tab,
   Alert,
   Grid,
+  Paper,
 } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
+import Header from "../../components/Header/Header";
+import Footer from "../../components/Footer/Footer";
 import ReviewItem from "../../components/ReviewItem/ReviewItem";
 import AddReviewDialog from "../../components/AddReviewDialog/AddReviewDialog";
 import Loader from "../../components/Loader/Loader";
 import { GET_PRODUCT_BY_SLUG, GET_PRODUCT_REVIEWS } from "../../graphql/queries/queries";
 import { ADD_PRODUCT_REVIEW } from "../../graphql/mutations/login";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ErrorIcon from "@mui/icons-material/Error";
+import LogoutIcon from "@mui/icons-material/Logout";
 import Carousel from "../../components/Carousel/Carousel";
 import "./ProductDetailPage.scss";
 
@@ -40,7 +45,7 @@ function TabPanel(props) {
 const ProductDetailPage = () => {
   const { slug } = useParams({ from: "/product/$slug" });
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
   const [tabValue, setTabValue] = useState(0);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
 
@@ -110,23 +115,76 @@ const ProductDetailPage = () => {
     return null;
   }
 
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/login" });
+  };
+
   if (productError) {
+    const isAccessDenied = productError.message?.includes("Access denied") || 
+                          productError.networkError?.statusCode === 401;
+
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Typography color="error">Error loading product: {productError.message}</Typography>
-      </Container>
+      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+        <Header user={user} onLogout={handleLogout} />
+        <Container maxWidth="lg" sx={{ py: 4, flex: 1 }}>
+          <Button
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate({ to: "/products" })}
+            sx={{ mb: 3 }}
+          >
+            Back to Products
+          </Button>
+
+          <Paper sx={{ p: 4, backgroundColor: "#fff3e0" }}>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
+              <ErrorIcon sx={{ fontSize: 40, color: "#f57c00", mt: 1 }} />
+              <Box>
+                <Typography variant="h6" sx={{ mb: 1 }}>
+                  {isAccessDenied ? "Authorization Error" : "Failed to Load Product"}
+                </Typography>
+                <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
+                  {isAccessDenied
+                    ? "Your session has expired or you don't have permission to access this product. Please log in again."
+                    : productError.message}
+                </Typography>
+                <Box sx={{ display: "flex", gap: 2 }}>
+                  <Button
+                    variant="outlined"
+                    startIcon={<ArrowBackIcon />}
+                    onClick={() => navigate({ to: "/products" })}
+                  >
+                    Back to Products
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<LogoutIcon />}
+                    onClick={handleLogout}
+                  >
+                    Go Back to Login
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          </Paper>
+        </Container>
+        <Footer />
+      </Box>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate({ to: "/products" })}
-        sx={{ mb: 3 }}
-      >
-        Back to Products
-      </Button>
+    <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <Header user={user} onLogout={handleLogout} />
+      <Container maxWidth="lg" sx={{ py: 4, flex: 1 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate({ to: "/products" })}
+          sx={{ mb: 3 }}
+        >
+          Back to Products
+        </Button>
 
       {productLoading ? (
         <Loader message="Loading product details..." />
@@ -257,7 +315,9 @@ const ProductDetailPage = () => {
           </TabPanel>
         </Box>
       )}
-    </Container>
+      </Container>
+      <Footer />
+    </Box>
   );
 };
 
