@@ -1,6 +1,5 @@
-export { typeDefs } from "./schema/index.js";
-export { resolvers, queryResolvers, mutationResolvers } from "./resolvers/index.js";
-export { MOCK_PRODUCTS } from "./mocks/products.js";
-export { MOCK_USERS } from "./mocks/users.js";
-export { MOCK_REVIEWS } from "./mocks/reviews.js";
-export { generateToken, verifyToken } from "./mocks/utils.js";
+// This file is kept for backward compatibility
+// Active GraphQL files:
+// - mutations/login.js - User/Admin login and registration mutations
+// - queries/queries.js - Product and review queries
+// All other resolvers, schema, and mocks are deprecated (using real API instead)
