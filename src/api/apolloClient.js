@@ -1,12 +1,13 @@
 import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
+import { getCurrentToken } from "../utils/tokenStore";
 
 const httpLink = new HttpLink({
   uri: "https://gql-shopping-sample.onrender.com/graphql"
 });
 
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem("token");
+  const token = getCurrentToken();
   return {
     headers: {
       ...headers,

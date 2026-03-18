@@ -86,7 +86,7 @@ const ProductListPage = () => {
                 </Typography>
                 <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
                   {isAccessDenied
-                    ? "Your session has expired or you don't have permission to access products. Please log in again."
+                    ? "You don't have permission to access products. Please log in again."
                     : error.message}
                 </Typography>
                 <Button

@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { useAuth } from "../hooks/useAuth";
 
 const RootLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isAuthenticated = !!localStorage.getItem("token");
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const publicRoutes = ["/login", "/register"];

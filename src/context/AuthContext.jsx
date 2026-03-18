@@ -1,50 +1,50 @@
 import { createContext, useState } from "react";
+import { encryptToken, decryptToken } from "../utils/encryption";
+import { setCurrentToken, clearCurrentToken } from "../utils/tokenStore";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
-  const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || null;
-  });
+  const [user, setUser] = useState(null);
+  const [encryptedToken, setEncryptedToken] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const login = (userData, authToken) => {
-    localStorage.setItem("token", authToken);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setToken(authToken);
+    const encrypted = encryptToken(authToken);
+    setEncryptedToken(encrypted);
     setUser(userData);
     setError(null);
+    setCurrentToken(authToken);
   };
 
   const register = (userData, authToken) => {
-    localStorage.setItem("token", authToken);
-    localStorage.setItem("user", JSON.stringify(userData));
-    setToken(authToken);
+    const encrypted = encryptToken(authToken);
+    setEncryptedToken(encrypted);
     setUser(userData);
     setError(null);
+    setCurrentToken(authToken);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
+    setEncryptedToken(null);
     setUser(null);
+    clearCurrentToken();
   };
 
-  const isAuthenticated = !!token;
+  const getToken = () => {
+    return encryptedToken ? decryptToken(encryptedToken) : null;
+  };
+
+  const isAuthenticated = !!encryptedToken;
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
+        encryptedToken,
+        token: getToken(),
         loading,
         error,
         isAuthenticated,
@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
         register,
         logout,
         setError,
+        getToken,
       }}
     >
       {children}

@@ -1,5 +1,7 @@
+import { getCurrentToken } from "../utils/tokenStore";
+
 export const isAuthenticated = () => {
-  return !!localStorage.getItem("token");
+  return !!getCurrentToken();
 };
 
 export const publicGuard = async ({ context, location }) => {

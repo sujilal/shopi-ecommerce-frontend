@@ -22,10 +22,10 @@ import "./LoginPage.scss";
 const LoginPage = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  
+
   const [userLoginMutation, { loading: userLoading }] = useMutation(USER_LOGIN);
   const [adminLoginMutation, { loading: adminLoading }] = useMutation(ADMIN_LOGIN);
-  
+
   const [loginType, setLoginType] = useState("user"); // "user" or "admin"
   const [formData, setFormData] = useState({
     email: "",
@@ -55,7 +55,7 @@ const LoginPage = () => {
 
     try {
       let data;
-      
+
       if (loginType === "user") {
         const response = await userLoginMutation({
           variables: {
@@ -75,7 +75,6 @@ const LoginPage = () => {
       }
 
       if (data) {
-        // Store the user role in localStorage
         const userData = {
           ...data.user,
           role: loginType
